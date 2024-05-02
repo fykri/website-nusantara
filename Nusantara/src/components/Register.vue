@@ -40,7 +40,7 @@
               <div class="input-group mb-3">
                 <div class="col">
                   <label for="" class="mb-2">Username</label>
-                  <input type="text" v-model="username" class="form-control form-control-lg bg-light fs-6 w-100" placeholder="Username" required autofocus />
+                  <input type="email" v-model="username" class="form-control form-control-lg bg-light fs-6 w-100" placeholder="Username" required autofocus />
                   <div class="invalid-feedback">Username is invalid</div>
                 </div>
               </div>
@@ -54,7 +54,7 @@
               <div class="input-group mb-3">
                 <div class="col">
                   <label for="" class="mb-2">Confirm Password</label>
-                  <input type="password" v-model="confirmPassword" class="form-control form-control-lg bg-light fs-6" placeholder="password" required />
+                  <input type="password" v-model="confirmPassword" class="form-control form-control-lg bg-light fs-6" placeholder="confirm password" required />
                   <div class="invalid-feedback">Password is required</div>
                 </div>
               </div>
@@ -100,6 +100,7 @@ import axios from 'axios';
           });
 
           if (response.data.berhasil == true) {
+              alert('registrasi berhasil')
               this.$router.push('/auth/login');
           } else {
             this.registrationResponse = response.data.msg
