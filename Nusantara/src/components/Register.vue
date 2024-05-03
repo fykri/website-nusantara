@@ -33,7 +33,7 @@
         <div class="col-md-6 p-4 my-3 right-box">
           <form @submit.prevent="handleSubmit" class="needs-validation" autocomplete="off">
             <div class="row align-items-center">
-              <div style="color: red;">{{  registrationResponse }}</div>
+              <div class="text-danger ">{{  registrationResponse }}</div>
               <div class="header-text mb-4">
                 <h2>Register</h2>
               </div>
@@ -55,6 +55,7 @@
                 <div class="col">
                   <label for="" class="mb-2">Confirm Password</label>
                   <input type="password" v-model="confirmPassword" class="form-control form-control-lg bg-light fs-6" placeholder="confirm password" required />
+                  <small v-if="passwordRetype" class="text-danger fw-bold">PASSWORD ENCORECT</small>
                   <div class="invalid-feedback">Password is required</div>
                 </div>
               </div>
@@ -64,7 +65,7 @@
                 </div>
               </div>
               <div class="input-group mb-3">
-                <button type="submit" class="btn btn-lg btn-primary w-100 fs-6">Register</button>
+                <button type="submit" class="btn btn-lg btn-primary w-100 fs-6" :disabled="passwordRetype">Register</button>
               </div>
             </div>
           </form>
@@ -83,32 +84,49 @@ import axios from 'axios';
        username:'',
        password:'',
        confirmPassword:'',
-       registrationResponse:''
+       registrationResponse:'',
+       passwordRetype: false
       }
     },
     methods: {
       async handleSubmit() {
         try {
-          const response = await axios.post('http://localhost:3000/auth/register', {
+          const payload = {
             username: this.username,
             password: this.password,
             confirmPassword: this.confirmPassword
-          }, {
+          };
+
+          const response = await axios.post('http://localhost:3000/auth/register', payload, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             }
           });
 
-          if (response.data.berhasil == true) {
-              alert('registrasi berhasil')
-              this.$router.push('/auth/login');
+          if (response.data.berhasil) {
+            alert('Registrasi berhasil');
+            this.$router.push('/auth/login');
           } else {
-            this.registrationResponse = response.data.msg
+            this.registrationResponse = response.data.msg;
           }
-          
-
         } catch (error) {
-          console.log('error', error);
+          console.error('Error during registration:', error);
+        }
+      }
+    },
+    watch: {
+      password(value) {
+        if(this.confirmPassword != value) {
+          this.passwordRetype = true
+        } else {
+          this.passwordRetype = false;
+        }
+      },
+      confirmPassword(value) {
+        if(value == this.password || value.length == 0) {
+          this.passwordRetype = false
+        } else {
+          this.passwordRetype = true;
         }
       }
     }
